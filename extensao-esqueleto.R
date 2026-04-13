@@ -46,8 +46,20 @@ write.csv(dados_sinasc_2, "dados_sinasc_2.csv", row.names = FALSE)
 
 # Tarefa 4. Verificar em dados_sinasc_2 a frequência das categorias das seguintes variáveis: LOCNASC, ESTCIVMAE, GESTACAO, GRAVIDEZ, PARTO,
 # SEXO, APGAR5, RACACOR, IDANOMAL, ESCMAE2010, RACACORMAE, TPAPRESENT, TPROBSON, PARIDADE, KOTELCHUCK
-
-
+LOCNASC = table(dados_sinasc_2$LOCNASC) # nao informado com 9
+ESTCIVMAE = table(dados_sinasc_2$ESTCIVMAE) # nao informado com 9
+GESTACAO = table(dados_sinasc_2$GESTACAO) # nao informado com 9
+GRAVIDEZ = table(dados_sinasc_2$GRAVIDEZ) # nao informado com 9
+PARTO = table(dados_sinasc_2$PARTO) # nao informado com 9
+SEXO =  table(dados_sinasc_2$SEXO) # nao informado com 0
+APGAR5 = table(dados_sinasc_2$APGAR5) # nao informado com 99
+RACACOR = table(dados_sinasc_2$RACACOR)
+IDANOMAL = table(dados_sinasc_2$IDANOMAL) # nao informado com 9
+ESCMAE2010 = table(dados_sinasc_2$ESCMAE2010) # nao informado com 9
+TPAPRESENT = table(dados_sinasc_2$TPAPRESENT) # nao informado com 9
+TPROBSON = table(dados_sinasc_2$TPROBSON) # nao informado com 11
+PARIDADE = table(dados_sinasc_2$PARIDADE) # nao informado com 9
+KOTELCHUCK = table(dados_sinasc_2$KOTELCHUCK) # nao informado com 0
 # Tarefa 5. Atribuir para cada variável de dados_sinasc_2 como sendo NA a categoria de "Não informado ou Ignorado", geralmente com código 9
 # KOTELCHUCK = 9 significa "não informado"   TPROBSON = 11 significa "não classificado por falta de informação"
 # veja o dicionário do SINASC para identificar qual o código das categorias de cada variável
