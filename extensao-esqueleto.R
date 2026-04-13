@@ -59,7 +59,7 @@ ESCMAE2010 = table(dados_sinasc_2$ESCMAE2010) # nao informado com 9
 TPAPRESENT = table(dados_sinasc_2$TPAPRESENT) # nao informado com 9
 TPROBSON = table(dados_sinasc_2$TPROBSON) # nao informado com 11
 PARIDADE = table(dados_sinasc_2$PARIDADE) # nao informado com 9
-KOTELCHUCK = table(dados_sinasc_2$KOTELCHUCK) # nao informado com 0
+KOTELCHUCK = table(dados_sinasc_2$KOTELCHUCK) # nao informado com 9
 # Tarefa 5. Atribuir para cada variável de dados_sinasc_2 como sendo NA a categoria de "Não informado ou Ignorado", geralmente com código 9
 # KOTELCHUCK = 9 significa "não informado"   TPROBSON = 11 significa "não classificado por falta de informação"
 # veja o dicionário do SINASC para identificar qual o código das categorias de cada variável
