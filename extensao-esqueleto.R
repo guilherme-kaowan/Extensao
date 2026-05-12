@@ -798,6 +798,54 @@ write.csv(basesim, "SIM_TO.csv", row.names = FALSE)
 # 11 POPRC_F_15
 # 12 POPRC_F_15_49
 # 13 POPRC_F_50
+dados_populacao_estimada = read.csv("população residente estimada - UF e municípios - 2015 - SIDRA - tabela_6579.csv", header = TRUE, sep = ";")
+dados_populacao_por_sexo = read.csv("população residente censo 2010 - UF e municípios - total e por sexo - SIDRA - tabela_1552.csv", header = TRUE, sep = ";")
+dados_populacao_por_faixa_etaria = read.csv("população residente censo 2010 - por faixa etária -  UF - SIDRA - tabela_1552.csv", header = TRUE, sep = ";")
+dados_populacao_por_faixa_etaria_municipio = read.csv("população residente censo 2010 - por faixa etária e sexo -  municípios - SIDRA - tabela_1552.csv", header = TRUE, sep = ";")
+colunas_idade <- c("CODMUNRES", "F_IDADE", "POP", "POPF")
+idade_uf <- dados_populacao_por_faixa_etaria[dados_populacao_por_faixa_etaria$CODMUNRES == "17", colunas_idade]
+idade_mun <- dados_populacao_por_faixa_etaria_municipio[substr(dados_populacao_por_faixa_etaria_municipio$CODMUNRES, 1, 2) == "17", colunas_idade]
+idade_to_consolidada <- rbind(idade_uf, idade_mun)
+SIDRA_UF <- dados_populacao_estimada[substr(dados_populacao_estimada$CODMUNRES, 1, 2) == "17", c("CODMUNRES", "POPRE_T")]
+SIDRA_UF <- merge(SIDRA_UF, 
+                  dados_populacao_por_sexo[substr(dados_populacao_por_sexo$CODMUNRES, 1, 2) == "17", 
+                                           c("CODMUNRES", "POPRC_T", "POPRC_M", "POPRC_F")], 
+                  by = "CODMUNRES", 
+                  all.x = TRUE)
+SIDRA_UF <- merge(SIDRA_UF, 
+                  idade_to_consolidada, 
+                  by = "CODMUNRES", 
+                  all.x = TRUE)
+SIDRA_UF$ANO <- 2015
+SIDRA_UF$NIVEL <- ifelse(SIDRA_UF$CODMUNRES == "17", "UF", "MUNICIPIO")
+
+menor_15 <- c("0 a 4 anos", "5 a 9 anos", "10 a 14 anos")
+entre_15_49 <- c("15 a 19 anos", "20 a 24 anos", "25 a 29 anos", 
+                 "30 a 34 anos", "35 a 39 anos", "40 a 44 anos", "45 a 49 anos")
+
+v8_11 <- aggregate(cbind(POP, POPF) ~ CODMUNRES, 
+                   data = SIDRA_UF[SIDRA_UF$F_IDADE %in% menor_15, ], sum)
+names(v8_11) <- c("CODMUNRES", "POPRC_15", "POPRC_F_15")
+
+v9_12 <- aggregate(cbind(POP, POPF) ~ CODMUNRES, 
+                   data = SIDRA_UF[SIDRA_UF$F_IDADE %in% entre_15_49, ], sum)
+names(v9_12) <- c("CODMUNRES", "POPRC_15_49", "POPRC_F_15_49")
+
+v10_13 <- aggregate(cbind(POP, POPF) ~ CODMUNRES, 
+                    data = SIDRA_UF[!(SIDRA_UF$F_IDADE %in% c(menor_15, entre_15_49)), ], sum)
+names(v10_13) <- c("CODMUNRES", "POPRC_50", "POPRC_F_50")
+
+SIDRA_UF <- unique(SIDRA_UF[, c("ANO", "NIVEL", "CODMUNRES", "POPRE_T", "POPRC_T", "POPRC_M", "POPRC_F")])
+
+SIDRA_UF <- merge(SIDRA_UF, v8_11, by = "CODMUNRES", all.x = TRUE)
+SIDRA_UF <- merge(SIDRA_UF, v9_12, by = "CODMUNRES", all.x = TRUE)
+SIDRA_UF <- merge(SIDRA_UF, v10_13, by = "CODMUNRES", all.x = TRUE)
+SIDRA_UF <- SIDRA_UF[, c("ANO", "NIVEL", "CODMUNRES", "POPRE_T", "POPRC_T", 
+                         "POPRC_M", "POPRC_F", "POPRC_15", "POPRC_15_49", 
+                         "POPRC_50", "POPRC_F_15", "POPRC_F_15_49", "POPRC_F_50")]
+SIDRA_UF <- SIDRA_UF[order(SIDRA_UF$NIVEL, decreasing = TRUE), ]
+# Exportando arquivo
+write.csv(SIDRA_UF, "SIDRA_TO.csv", row.names = FALSE)
 #####################################################################################################
 # ETAPA 4: GERAR BANCO DE DADOS FINAL DO ESTADO, BASEADO NAS ANÁLISES DE SINASC, SIM, IBGE, SNIS,...
 ######################################################################################################
