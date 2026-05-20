@@ -854,8 +854,27 @@ write.csv(SIDRA_UF, "SIDRA_TO.csv", row.names = FALSE)
 # 3  CODMUNRES
 # 4 POPR_RA
 # 5 POPR_RE
-
+agua_esgoto = read.csv("agua e esgoto - município - 2015.csv", header = TRUE, sep = ",")
+#arquivo modificando pelo excel
+SINISA_UF = agua_esgoto[substr(agua_esgoto$CODMUNRES, 1, 2) == "17", ]
+SINISA_UF = SINISA_UF[, c(1, 5, 6)]
+SINISA_UF$ANO = "2015"
+SINISA_UF$NIVEL = "MUNICIPIO"
+soma_ra = sum(as.numeric(SINISA_UF$POPR_RA), na.rm = TRUE)
+soma_re = sum(as.numeric(SINISA_UF$POPR_RE), na.rm = TRUE)
+linha_total = data.frame(
+  CODMUNRES = "17",
+  POPR_RA = soma_ra,
+  POPR_RE = soma_re,
+  ANO = "2015",
+  NIVEL = "UF"
+)
+linha_total = linha_total[, names(SINISA_UF)]
+SINISA_UF = rbind(linha_total, SINISA_UF)
+colunas_ordenadas = c("ANO", "NIVEL", "CODMUNRES", "POPR_RA", "POPR_RE")
+SINISA_UF = SINISA_UF[, colunas_ordenadas]
 # Exporte o arquivo em formato CSV
+write.csv(SINISA_UF, "SINISA_TO.csv", row.names = FALSE)
 # Faça o commit com a mensagem "Script e dados TAREFA 3 - SINISA"
 
 # Tarefa 3: Acesso aos bancos de dados do ATLAS  e obtenção da informação
