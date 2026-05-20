@@ -891,8 +891,49 @@ write.csv(SINISA_UF, "SINISA_TO.csv", row.names = FALSE)
 # 5 IDHM_CA
 # 6 IDHM_CA_M
 # 7 IDHM_CA_F
+codigos = read.csv("códigos dos municípios - 2010.csv", header = TRUE, sep = ";")
+idhm_uf = read.csv("IDHM - 2010 (CENSO) e 2015 (PNAD) - total e por sexo - UF - Atlas Brasil.csv", header = TRUE, sep = ";")
+idhm_mun = read.csv("IDHM - 2010 - municípios - Atlas Brasil.csv", header = TRUE, sep = ";")
+
+codigos = codigos[, c(1, 2)]
+idhm_mun = idhm_mun[, c(1, 2)]
+idhm_uf = idhm_uf[, c(1, 2, 3, 4, 5, 6, 7)]
+idhm_mun$municipio_limpo <- substr(idhm_mun$município, 1, nchar(idhm_mun$município) - 5)
+codigos_to <- codigos[substr(as.character(codigos$CODMUNRES), 1, 2) == "17", ]
+base_to <- merge(idhm_mun, codigos_to, by.x = "municipio_limpo", by.y = "município")
+
+codigos_to <- codigos[substr(as.character(codigos$CODMUNRES), 1, 2) == "17", ]
+idhm_mun$municipio_limpo <- substr(idhm_mun$município, 1, nchar(idhm_mun$município) - 5)
+base_municipios_to <- merge(idhm_mun, codigos_to, by.x = "municipio_limpo", by.y = "município")
+uf_to <- idhm_uf[idhm_uf$UF == "Tocantins", ]
+
+ATLAS_UF = data.frame(
+  CODMUNRES = base_municipios_to$CODMUNRES,
+  IDHM_A = base_municipios_to$IDHM_2010,
+  IDHM_CA = uf_to$IDHM_2010,
+  IDHM_CA_M = uf_to$IDHM_2010_M,
+  IDHM_CA_F = uf_to$IDHM_2010_F
+)
+ATLAS_UF$ANO = "2015"
+ATLAS_UF$NIVEL = "MUNICIPIO"
+
+linha_total = data.frame(
+  CODMUNRES = "17",
+  IDHM_A = uf_to$IDHM_2010, 
+  IDHM_CA = uf_to$IDHM_2010,
+  IDHM_CA_M = uf_to$IDHM_2010_M,
+  IDHM_CA_F = uf_to$IDHM_2010_F,
+  ANO = "2015",
+  NIVEL = "UF"
+)
+linha_total = linha_total[, names(ATLAS_UF)]
+ATLAS_UF = rbind(linha_total, ATLAS_UF)
+colunas_ordenadas = c("ANO", "NIVEL", "CODMUNRES", "IDHM_A", "IDHM_CA", "IDHM_CA_M", "IDHM_CA_F")
+ATLAS_UF = ATLAS_UF[, colunas_ordenadas]
 
 # Exporte o arquivo em formato CSV# Faça o commit com a mensagem "Script e dados TAREFA 3 - ATLAS"
+write.csv(ATLAS_UF, "ATLAS_TO.csv", row.names = FALSE)
+
 #####################################################################################################
 # ETAPA 4: GERAR BANCO DE DADOS FINAL DO ESTADO, BASEADO NAS ANÁLISES DE SINASC, SIM, IBGE, SNIS,...
 ######################################################################################################
