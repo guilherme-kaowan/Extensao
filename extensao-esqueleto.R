@@ -977,8 +977,28 @@ DA_TO <- DA_TO[, c(colunas_identificacao, colunas_variaveis)]
 
 # Tarefa 2: Acrescentar no banco DA_UF os indicadores TFG, TMG, RMM, TMM, TMM_P, TMN, TMN_P, TMN_T e TMI e chamar o banco 
 # de BDEM_UF_2015
+BDEM_TO_2015 <- DA_TO
+#TFG
+BDEM_TO_2015$TFG <- (as.numeric(BDEM_TO_2015$TN) / as.numeric(BDEM_TO_2015$POPRC_F_15_49)) * 1000
+#TMG
+BDEM_TO_2015$TMG <- (as.numeric(BDEM_TO_2015$TO) / as.numeric(BDEM_TO_2015$POPRE_T)) * 1000
+#RMM
+BDEM_TO_2015$RMM <- (as.numeric(BDEM_TO_2015$TO_MT) / as.numeric(BDEM_TO_2015$TN)) * 100000
+#TMM
+BDEM_TO_2015$TMM <- (as.numeric(BDEM_TO_2015$TO_MT) / as.numeric(BDEM_TO_2015$POPRC_F_15_49)) * 100000
+#TMM_P
+BDEM_TO_2015$TMM_P <- (as.numeric(BDEM_TO_2015$TO_MT_P) / as.numeric(BDEM_TO_2015$POPRC_F_15_49)) * 100000
+#TMN
+BDEM_TO_2015$TMN <- (as.numeric(BDEM_TO_2015$TO_NT) / as.numeric(BDEM_TO_2015$TN)) * 1000
+#TMN_P
+BDEM_TO_2015$TMN_P <- (as.numeric(BDEM_TO_2015$TO_NT_P) / as.numeric(BDEM_TO_2015$TN)) * 1000
+#TMN_T
+BDEM_TO_2015$TMN_T <- (as.numeric(BDEM_TO_2015$TO_NT_T) / as.numeric(BDEM_TO_2015$TN)) * 1000
+#TMI
+BDEM_TO_2015$TMI <- ((as.numeric(BDEM_TO_2015$TO_NT) + as.numeric(BDEM_TO_2015$TO_PNT)) / as.numeric(BDEM_TO_2015$TN)) * 1000
 
 # Após a criação do banco, fazer commit “Script e dados BDEM_UF_2015”
+write.csv(BDEM_TO_2015, "BDEM_TO_2015.csv", row.names = FALSE)
 
 ############################################################################################
 # ETAPA 5: EMPILHAMENTO DOS DATAFRAMES DE CADA ESTADO, GERANDO UM DATAFRAME DE 27 LINHAS
