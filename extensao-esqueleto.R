@@ -941,12 +941,37 @@ write.csv(ATLAS_UF, "ATLAS_TO.csv", row.names = FALSE)
 
 # Tarefa 1: Fazer o merge dos bancos de dados criados nas etapas anteriores (SIDRA_UF, ATLAS_ UF,  SINASC_UF, SIM_UF e SINISA_UF), 
 # sendo que as variáveis deverão seguir a ordem
-
 # ANO, NIVEL, CODMUNRES (uma única vez), variáveis do SIDRA, do ATLAS, do SINASC, do SIM e da SINISA. No merge deve constar 
 # qualquer município que esteja em pelo menos um dos bancos
-
 # Chamar o banco de dados de DA_UF
+dados_sidra = read.csv("SIDRA_TO.csv", header = TRUE, sep = ",")
+dados_atlas =  read.csv("ATLAS_TO.csv", header = TRUE, sep = ",")
+dados_sinasc  = read.csv("SINASC_TO.csv", header = TRUE, sep = ",")
+dados_sim  = read.csv("SIM_TO.csv", header = TRUE, sep = ",")
+dados_sinisa = read.csv("SINISA_TO.csv", header = TRUE, sep = ",")
 
+dados_sidra$COD7  <- substr(as.character(dados_sidra$CODMUNRES), 1, 6)
+dados_atlas$COD7  <- substr(as.character(dados_atlas$CODMUNRES), 1, 6)
+dados_sinasc$COD7 <- substr(as.character(dados_sinasc$CODMUNRES), 1, 6)
+dados_sim$COD7    <- substr(as.character(dados_sim$CODMUNRES), 1, 6)
+dados_sinisa$COD7 <- substr(as.character(dados_sinisa$CODMUNRES), 1, 6)
+
+dados_sidra$CODMUNRES  <- NULL
+dados_sinasc$CODMUNRES <- NULL
+dados_sim$CODMUNRES    <- NULL
+dados_sinisa$CODMUNRES <- NULL
+cod_merge <- c("COD7", "ANO", "NIVEL")
+
+DA_TO <- merge(dados_sidra, dados_atlas, by = cod_merge, all = TRUE)
+DA_TO <- merge(DA_TO, dados_sinasc, by = cod_merge, all = TRUE)
+DA_TO <- merge(DA_TO, dados_sim, by = cod_merge, all = TRUE)
+DA_TO <- merge(DA_TO, dados_sinisa, by = cod_merge, all = TRUE)
+DA_TO$CODMUNRES <- ifelse(is.na(DA_TO$CODMUNRES), DA_TO$COD7, DA_TO$CODMUNRES)
+DA_TO$COD7 <- NULL
+todas_colunas <- names(DA_TO)
+colunas_identificacao <- c("ANO", "NIVEL", "CODMUNRES")
+colunas_variaveis <- setdiff(todas_colunas, colunas_identificacao)
+DA_TO <- DA_TO[, c(colunas_identificacao, colunas_variaveis)]
 # Após o merge dos bancos, fazer commit “Script e dados agregados da UF”
 
 
